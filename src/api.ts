@@ -1,6 +1,5 @@
 import { defineOperationApi } from "@directus/extensions-sdk";
-
-import axios from "axios";
+import { Meilisearch } from "meilisearch";
 
 type Options = {
   collection: string;
@@ -10,12 +9,13 @@ type Options = {
 };
 
 export default defineOperationApi<Options>({
-  id: "escape-index-with-meilisearch",
+  id: "index-with-meilisearch",
   handler: async (
     { collection, fields, pageSize, filter },
     { services, env, getSchema, database, accountability, logger }
   ) => {
-    const meilisearchUrl = env.MEILISEARCH_URL + "/_bulk";
+    const meilisearchUrl = env.MEILISEARCH_URL;
+    const meilisearchApiKey = env.MEILISEARCH_API_KEY;
     const limit = pageSize ?? 200;
     const finalFilter = filter ?? undefined;
 
@@ -26,6 +26,13 @@ export default defineOperationApi<Options>({
     if (finalFilter) {
       logger.info("with filter: " + JSON.stringify(finalFilter));
     }
+
+    const client = new Meilisearch({
+      host: meilisearchUrl,
+      apiKey: meilisearchApiKey,
+    });
+
+    const index = client.index(collection.toLowerCase());
 
     const schema = await getSchema({ database });
 
@@ -48,29 +55,13 @@ export default defineOperationApi<Options>({
       return items;
     };
 
-    const indexData = async (items: any) => {
-      const json: any[] = [];
-      items.forEach((item: any) => {
-        json.push({
-          index: {
-            _index: collection.toLowerCase(),
-            _id: item.id,
-          },
-        });
-        json.push(item);
-      });
-      // @ts-ignore
-      const body = json.map(JSON.stringify).join("\n") + "\n";
-
+    const indexData = async (items: any[]) => {
       try {
-        const response = await axios.post(meilisearchUrl, body, {
-          headers: {
-            "Content-Type": "application/x-ndjson",
-          },
-        });
-        return response.data;
+        const response = await index.addDocuments(items, { primaryKey: "id" });
+        logger.info(`Task enqueued: ${response.taskUid}`);
+        return response;
       } catch (error: any) {
-        logger.error(error.response);
+        logger.error(error.message);
         throw error;
       }
     };
