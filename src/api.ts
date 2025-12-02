@@ -64,6 +64,14 @@ export default defineOperationApi<Options>({
               Array.isArray(item.expertiseDomains) &&
               item.expertiseDomains.length > 0;
           });
+        } else if (collection.toLowerCase() === "mainevent") {
+          logger.info("Add year field to mainevent items");
+          items.forEach((item) => {
+            if (item.startDate) {
+              const date = new Date(item.startDate);
+              item.year = date.getFullYear();
+            }
+          });
         }
         const response = await index.addDocuments(items, {
           primaryKey: "id",
