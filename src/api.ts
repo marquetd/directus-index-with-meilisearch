@@ -9,7 +9,7 @@ type Options = {
 };
 
 export default defineOperationApi<Options>({
-  id: "index-with-meilisearch",
+  id: "escape-index-with-meilisearch",
   handler: async (
     { collection, fields, pageSize, filter },
     { services, env, getSchema, database, accountability, logger }
