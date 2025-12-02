@@ -57,7 +57,17 @@ export default defineOperationApi<Options>({
 
     const indexData = async (items: any[]) => {
       try {
-        const response = await index.addDocuments(items, { primaryKey: "id" });
+        if (collection.toLowerCase() === "person") {
+          logger.info("Add isExpert field to person items");
+          items.forEach((item) => {
+            item.isExpert =
+              Array.isArray(item.expertiseDomains) &&
+              item.expertiseDomains.length > 0;
+          });
+        }
+        const response = await index.addDocuments(items, {
+          primaryKey: "id",
+        });
         logger.info(`Task enqueued: ${response.taskUid}`);
         return response;
       } catch (error: any) {
