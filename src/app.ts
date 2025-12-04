@@ -11,6 +11,7 @@ export default defineOperationApp({
     pageSize,
     filter,
     filterableattributes,
+    searchableattributes,
     sortfacetvaluesby,
   }) => [
     {
@@ -32,6 +33,10 @@ export default defineOperationApp({
     {
       label: "Filterable Attributes",
       text: filterableattributes,
+    },
+    {
+      label: "Searchable Attributes",
+      text: searchableattributes,
     },
     {
       label: "Sort Facet Values By",
@@ -91,6 +96,21 @@ export default defineOperationApp({
         options: {
           collectionField: "collection",
         },
+      },
+    },
+    {
+      field: "searchableattributes",
+      name: "Searchable Attributes (order matters)",
+      type: "json",
+      meta: {
+        width: "full",
+        interface: "input-code",
+        required: false,
+        options: {
+          language: "json",
+          placeholder: '["title", "description", "content"]',
+        },
+        note: 'Default: ["*"] (all fields). Fields listed first have higher search priority.',
       },
     },
     {
