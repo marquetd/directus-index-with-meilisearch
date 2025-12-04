@@ -4,6 +4,7 @@ import { Meilisearch } from "meilisearch";
 type Options = {
   collection: string;
   fields: string[];
+  filterableattributes: string[];
   pageSize: number;
   filter: string;
 };
@@ -11,12 +12,12 @@ type Options = {
 export default defineOperationApi<Options>({
   id: "escape-index-with-meilisearch",
   handler: async (
-    { collection, fields, pageSize, filter },
+    { collection, fields, pageSize, filter, filterableattributes },
     { services, env, getSchema, database, accountability, logger }
   ) => {
     const meilisearchUrl = env.MEILISEARCH_URL;
     const meilisearchApiKey = env.MEILISEARCH_API_KEY;
-    const limit = pageSize ?? 200;
+    const limit = pageSize ?? 300;
     const finalFilter = filter ?? undefined;
 
     logger.info(
@@ -33,6 +34,13 @@ export default defineOperationApi<Options>({
     });
 
     const index = client.index(collection.toLowerCase());
+
+    await index.updateFilterableAttributes(filterableattributes);
+    await index.updateFaceting({
+      sortFacetValuesBy: {
+        "*": "count",
+      },
+    });
 
     const schema = await getSchema({ database });
 

@@ -5,7 +5,13 @@ export default defineOperationApp({
   name: "Index with Meilisearch",
   icon: "box",
   description: "Index collection items with meilisearch",
-  overview: ({ collection, fields, pageSize, filter }) => [
+  overview: ({
+    collection,
+    fields,
+    pageSize,
+    filter,
+    filterableattributes,
+  }) => [
     {
       label: "$t:collection",
       text: collection,
@@ -21,6 +27,10 @@ export default defineOperationApp({
     {
       label: "filter",
       text: filter,
+    },
+    {
+      label: "Filterable Attributes",
+      text: filterableattributes,
     },
   ],
   options: [
@@ -64,6 +74,18 @@ export default defineOperationApp({
         width: "full",
         interface: "input-code",
         required: false,
+      },
+    },
+    {
+      field: "filterableattributes",
+      name: "Filterable Attributes",
+      type: "string",
+      meta: {
+        width: "full",
+        interface: "system-field-tree",
+        options: {
+          collectionField: "collection",
+        },
       },
     },
   ],
