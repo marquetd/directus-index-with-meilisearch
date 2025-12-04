@@ -35,7 +35,7 @@ SSH_PASSWORD=your-password
 SSH_DIRECTORY=/path/to/directus/extensions/index-with-meilisearch
 ```
 
-1. Run the upload command:
+2. Run the upload command:
 
 ```bash
 npm run upload
@@ -50,6 +50,32 @@ Add the following environment variables to your Directus instance:
 | `MEILISEARCH_URL`        | Meilisearch server URL             | `http://localhost:7700` |
 | `MEILISEARCH_API_KEY`    | Meilisearch API key                | `your-master-key`       |
 | `EXTENSIONS_AUTO_RELOAD` | Enable auto-reload for development | `true`                  |
+
+## Usage
+
+Add the "Index with Meilisearch" operation to a Directus Flow and configure the following options:
+
+| Option                    | Description                                                                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| **Collection**            | The Directus collection to index into Meilisearch.                                                                            |
+| **Page Size**             | Number of items per batch (default: 300).                                                                                     |
+| **Fields**                | Fields to include in the Meilisearch index.                                                                                   |
+| **Filter**                | Directus filter to limit which items are indexed. Leave empty to index all.                                                   |
+| **Filterable Attributes** | Fields that can be used for filtering and faceting in Meilisearch queries.                                                    |
+| **Searchable Attributes** | JSON array of fields for full-text search. Order matters: fields listed first have higher priority. Default: `["*"]`.         |
+| **Sort Facet Values By**  | JSON object to configure facet sorting. Default: `{"*": "count"}`. Use `"count"` for frequency or `"alpha"` for alphabetical. |
+
+### Example: Searchable Attributes
+
+```json
+["title", "description", "content"]
+```
+
+### Example: Sort Facet Values By
+
+```json
+{ "*": "count", "category": "alpha" }
+```
 
 ## Development
 

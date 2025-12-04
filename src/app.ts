@@ -52,6 +52,7 @@ export default defineOperationApp({
         width: "half",
         interface: "system-collection",
         required: true,
+        note: "The Directus collection to index into Meilisearch.",
       },
     },
     {
@@ -62,6 +63,7 @@ export default defineOperationApp({
         width: "half",
         interface: "input",
         required: false,
+        note: "Number of items per batch. Default: 300.",
       },
     },
     {
@@ -74,6 +76,7 @@ export default defineOperationApp({
         options: {
           collectionField: "collection",
         },
+        note: "Fields to include in the Meilisearch index. Select all fields you want to be searchable or displayed.",
       },
     },
     {
@@ -84,6 +87,7 @@ export default defineOperationApp({
         width: "full",
         interface: "input-code",
         required: false,
+        note: "Directus filter to limit which items are indexed. Leave empty to index all items.",
       },
     },
     {
@@ -96,6 +100,7 @@ export default defineOperationApp({
         options: {
           collectionField: "collection",
         },
+        note: "Fields that can be used for filtering and faceting in Meilisearch queries.",
       },
     },
     {
