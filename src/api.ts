@@ -7,12 +7,20 @@ type Options = {
   filterableattributes: string[];
   pageSize: number;
   filter: string;
+  sortfacetvaluesby: Record<string, "count" | "alpha"> | null;
 };
 
 export default defineOperationApi<Options>({
   id: "escape-index-with-meilisearch",
   handler: async (
-    { collection, fields, pageSize, filter, filterableattributes },
+    {
+      collection,
+      fields,
+      pageSize,
+      filter,
+      filterableattributes = ["*"],
+      sortfacetvaluesby,
+    },
     { services, env, getSchema, database, accountability, logger }
   ) => {
     const meilisearchUrl = env.MEILISEARCH_URL;
@@ -35,12 +43,28 @@ export default defineOperationApi<Options>({
 
     const index = client.index(collection.toLowerCase());
 
+    // Update filterable attributes only if provided
+    logger.info(
+      "Updating filterable attributes: " + JSON.stringify(filterableattributes)
+    );
     await index.updateFilterableAttributes(filterableattributes);
-    await index.updateFaceting({
-      sortFacetValuesBy: {
-        "*": "count",
-      },
-    });
+
+    const facetingSettings: {
+      maxValuesPerFacet: number;
+      sortFacetValuesBy: Record<string, "count" | "alpha">;
+    } = {
+      maxValuesPerFacet: 100,
+      sortFacetValuesBy: { "*": "count" },
+    };
+
+    if (sortfacetvaluesby && Object.keys(sortfacetvaluesby).length > 0) {
+      facetingSettings.sortFacetValuesBy = sortfacetvaluesby;
+    }
+
+    logger.info(
+      "Updating faceting options: " + JSON.stringify(facetingSettings)
+    );
+    await index.updateFaceting(facetingSettings);
 
     const schema = await getSchema({ database });
 

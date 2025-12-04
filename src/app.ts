@@ -11,6 +11,7 @@ export default defineOperationApp({
     pageSize,
     filter,
     filterableattributes,
+    sortfacetvaluesby,
   }) => [
     {
       label: "$t:collection",
@@ -31,6 +32,10 @@ export default defineOperationApp({
     {
       label: "Filterable Attributes",
       text: filterableattributes,
+    },
+    {
+      label: "Sort Facet Values By",
+      text: sortfacetvaluesby,
     },
   ],
   options: [
@@ -86,6 +91,21 @@ export default defineOperationApp({
         options: {
           collectionField: "collection",
         },
+      },
+    },
+    {
+      field: "sortfacetvaluesby",
+      name: "Sort Facet Values By",
+      type: "json",
+      meta: {
+        width: "full",
+        interface: "input-code",
+        required: false,
+        options: {
+          language: "json",
+          placeholder: '{"*": "count"}',
+        },
+        note: 'Default: {"*": "count"}. Use "count" to sort by frequency or "alpha" for alphabetical order.',
       },
     },
   ],
