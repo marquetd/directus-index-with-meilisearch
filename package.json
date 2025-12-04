@@ -27,15 +27,19 @@
   "scripts": {
     "build": "directus-extension build",
     "dev": "directus-extension build -w --no-minify",
-    "link": "directus-extension link"
+    "link": "directus-extension link",
+    "upload": "node scripts/upload.js",
+    "buildAndUpload": "npm run build && npm run upload"
   },
   "devDependencies": {
-    "@directus/extensions-sdk": "12.1.4",
+    "@directus/extensions-sdk": "17.0.3",
     "@types/node": "^22.10.5",
     "typescript": "^5.7.2",
     "vue": "^3.5.13"
   },
   "dependencies": {
-    "meilisearch": "^0.54.0"
+    "dotenv": "^17.2.3",
+    "meilisearch": "^0.54.0",
+    "ssh2": "^1.17.0"
   }
 }
