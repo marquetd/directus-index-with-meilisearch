@@ -45,34 +45,43 @@ export default defineOperationApi<Options>({
 
     const index = client.index(collection.toLowerCase());
 
-    // Update filterable attributes only if provided
-    logger.info(
-      "Updating filterable attributes: " + JSON.stringify(filterableattributes)
-    );
-    await index.updateFilterableAttributes(filterableattributes);
+    /**
+     * Configure the Meilisearch index settings
+     */
+    const configureIndex = async () => {
+      // Update filterable attributes
+      logger.info(
+        `Collection ${collection} - Updating filterable attributes: ` +
+          JSON.stringify(filterableattributes)
+      );
+      await index.updateFilterableAttributes(filterableattributes);
 
-    // Update searchable attributes (order matters!)
-    logger.info(
-      "Updating searchable attributes: " + JSON.stringify(searchableattributes)
-    );
-    await index.updateSearchableAttributes(searchableattributes);
+      // Update searchable attributes (order matters!)
+      logger.info(
+        `Collection ${collection} - Updating searchable attributes: ` +
+          JSON.stringify(searchableattributes)
+      );
+      await index.updateSearchableAttributes(searchableattributes);
 
-    const facetingSettings: {
-      maxValuesPerFacet: number;
-      sortFacetValuesBy: Record<string, "count" | "alpha">;
-    } = {
-      maxValuesPerFacet: 100,
-      sortFacetValuesBy: { "*": "count" },
+      // Update faceting settings
+      const facetingSettings: {
+        maxValuesPerFacet: number;
+        sortFacetValuesBy: Record<string, "count" | "alpha">;
+      } = {
+        maxValuesPerFacet: 100,
+        sortFacetValuesBy: { "*": "count" },
+      };
+
+      if (sortfacetvaluesby && Object.keys(sortfacetvaluesby).length > 0) {
+        facetingSettings.sortFacetValuesBy = sortfacetvaluesby;
+      }
+
+      logger.info(
+        `Collection ${collection} - Updating faceting options: ` +
+          JSON.stringify(facetingSettings)
+      );
+      await index.updateFaceting(facetingSettings);
     };
-
-    if (sortfacetvaluesby && Object.keys(sortfacetvaluesby).length > 0) {
-      facetingSettings.sortFacetValuesBy = sortfacetvaluesby;
-    }
-
-    logger.info(
-      "Updating faceting options: " + JSON.stringify(facetingSettings)
-    );
-    await index.updateFaceting(facetingSettings);
 
     const schema = await getSchema({ database });
 
@@ -148,6 +157,9 @@ export default defineOperationApi<Options>({
       }
     };
 
-    return await indexItems();
+    const result = await indexItems();
+    // Configure the index before indexing
+    await configureIndex();
+    return result;
   },
 });
