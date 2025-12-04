@@ -1,5 +1,6 @@
 import { defineOperationApi } from "@directus/extensions-sdk";
 import { Meilisearch } from "meilisearch";
+import { applyComputedFields, getComputedFieldNames } from "./computedFields";
 
 type Options = {
   collection: string;
@@ -49,12 +50,19 @@ export default defineOperationApi<Options>({
      * Configure the Meilisearch index settings
      */
     const configureIndex = async () => {
+      // Add computed fields to filterable attributes
+      const computedFields = getComputedFieldNames(collection);
+      const allFilterableAttributes = [
+        ...filterableattributes,
+        ...computedFields.filter((f) => !filterableattributes.includes(f)),
+      ];
+
       // Update filterable attributes
       logger.info(
         `Collection ${collection} - Updating filterable attributes: ` +
-          JSON.stringify(filterableattributes)
+          JSON.stringify(allFilterableAttributes)
       );
-      await index.updateFilterableAttributes(filterableattributes);
+      await index.updateFilterableAttributes(allFilterableAttributes);
 
       // Update searchable attributes (order matters!)
       logger.info(
@@ -106,22 +114,16 @@ export default defineOperationApi<Options>({
 
     const indexData = async (items: any[]) => {
       try {
-        if (collection.toLowerCase() === "person") {
-          logger.info("Add isExpert field to person items");
-          items.forEach((item) => {
-            item.isExpert =
-              Array.isArray(item.expertiseDomains) &&
-              item.expertiseDomains.length > 0;
-          });
-        } else if (collection.toLowerCase() === "mainevent") {
-          logger.info("Add year field to mainevent items");
-          items.forEach((item) => {
-            if (item.startDate) {
-              const date = new Date(item.startDate);
-              item.year = date.getFullYear();
-            }
-          });
+        // Apply computed fields for this collection
+        const appliedFields = applyComputedFields(items, collection);
+        if (appliedFields.length > 0) {
+          logger.info(
+            `Applied computed fields [${appliedFields.join(
+              ", "
+            )}] to ${collection} items`
+          );
         }
+
         const response = await index.addDocuments(items, {
           primaryKey: "id",
         });
