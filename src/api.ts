@@ -24,7 +24,7 @@ export default defineOperationApi<Options>({
       searchableattributes = ["*"],
       sortfacetvaluesby,
     },
-    { services, env, getSchema, database, accountability, logger }
+    { services, env, getSchema, database, accountability, logger },
   ) => {
     const meilisearchUrl = env.MEILISEARCH_URL;
     const meilisearchApiKey = env.MEILISEARCH_API_KEY;
@@ -32,7 +32,7 @@ export default defineOperationApi<Options>({
     const finalFilter = filter ?? undefined;
 
     logger.info(
-      `Indexing collection: ${collection} with meilisearch url: ${meilisearchUrl}`
+      `Indexing collection: ${collection} with meilisearch url: ${meilisearchUrl}`,
     );
     logger.info("with fields: " + JSON.stringify(fields));
     if (finalFilter) {
@@ -60,14 +60,14 @@ export default defineOperationApi<Options>({
       // Update filterable attributes
       logger.info(
         `Collection ${collection} - Updating filterable attributes: ` +
-          JSON.stringify(allFilterableAttributes)
+          JSON.stringify(allFilterableAttributes),
       );
       await index.updateFilterableAttributes(allFilterableAttributes);
 
       // Update searchable attributes (order matters!)
       logger.info(
         `Collection ${collection} - Updating searchable attributes: ` +
-          JSON.stringify(searchableattributes)
+          JSON.stringify(searchableattributes),
       );
       await index.updateSearchableAttributes(searchableattributes);
 
@@ -86,7 +86,7 @@ export default defineOperationApi<Options>({
 
       logger.info(
         `Collection ${collection} - Updating faceting options: ` +
-          JSON.stringify(facetingSettings)
+          JSON.stringify(facetingSettings),
       );
       await index.updateFaceting(facetingSettings);
     };
@@ -119,8 +119,8 @@ export default defineOperationApi<Options>({
         if (appliedFields.length > 0) {
           logger.info(
             `Applied computed fields [${appliedFields.join(
-              ", "
-            )}] to ${collection} items`
+              ", ",
+            )}] to ${collection} items`,
           );
         }
 

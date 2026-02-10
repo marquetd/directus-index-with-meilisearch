@@ -15,6 +15,13 @@ export const collectionComputedFields: Record<string, ComputedFieldConfig[]> = {
         Array.isArray(item.expertiseDomains) &&
         item.expertiseDomains.length > 0,
     },
+    {
+      fieldName: "inOffice",
+      compute: (item) => {
+        const jobs = item.jobs ?? [];
+        return jobs.some((i: any) => !i.endDate);
+      },
+    },
   ],
   mainevent: [
     {
@@ -45,7 +52,7 @@ export const getComputedFieldNames = (collectionName: string): string[] => {
  */
 export const applyComputedFields = (
   items: any[],
-  collectionName: string
+  collectionName: string,
 ): string[] => {
   const config = collectionComputedFields[collectionName.toLowerCase()];
   if (!config || config.length === 0) return [];
