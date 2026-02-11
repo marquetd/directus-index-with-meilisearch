@@ -93,14 +93,16 @@ export default defineOperationApp({
     {
       field: "filterableattributes",
       name: "Filterable Attributes",
-      type: "string",
+      type: "json",
       meta: {
         width: "full",
-        interface: "system-field-tree",
+        interface: "input-code",
+        required: false,
         options: {
-          collectionField: "collection",
+          language: "json",
+          placeholder: '["field1", "field2", "field3"]',
         },
-        note: "Fields that can be used for filtering and faceting in Meilisearch queries.",
+        note: "Fields that can be used for filtering and faceting in Meilisearch queries. Order matters for facet organization.",
       },
     },
     {
