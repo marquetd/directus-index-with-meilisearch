@@ -7,6 +7,7 @@ type Options = {
   fields: string[];
   filterableattributes: string[];
   searchableattributes: string[];
+  sortableattributes: string[];
   pageSize: number;
   filter: string;
   sortfacetvaluesby: Record<string, "count" | "alpha"> | null;
@@ -22,6 +23,7 @@ export default defineOperationApi<Options>({
       filter,
       filterableattributes = ["*"],
       searchableattributes = ["*"],
+      sortableattributes = [],
       sortfacetvaluesby,
     },
     { services, env, getSchema, database, accountability, logger },
@@ -70,6 +72,15 @@ export default defineOperationApi<Options>({
           JSON.stringify(searchableattributes),
       );
       await index.updateSearchableAttributes(searchableattributes);
+
+      // Update sortable attributes
+      if (sortableattributes && sortableattributes.length > 0) {
+        logger.info(
+          `Collection ${collection} - Updating sortable attributes: ` +
+            JSON.stringify(sortableattributes),
+        );
+        await index.updateSortableAttributes(sortableattributes);
+      }
 
       // Update faceting settings
       const facetingSettings: {

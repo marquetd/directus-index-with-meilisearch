@@ -12,6 +12,7 @@ export default defineOperationApp({
     filter,
     filterableattributes,
     searchableattributes,
+    sortableattributes,
     sortfacetvaluesby,
   }) => [
     {
@@ -37,6 +38,10 @@ export default defineOperationApp({
     {
       label: "Searchable Attributes",
       text: searchableattributes,
+    },
+    {
+      label: "Sortable Attributes",
+      text: sortableattributes,
     },
     {
       label: "Sort Facet Values By",
@@ -118,6 +123,20 @@ export default defineOperationApp({
           placeholder: '["title", "description", "content"]',
         },
         note: 'Default: ["*"] (all fields). Fields listed first have higher search priority.',
+      },
+    },
+    {
+      field: "sortableattributes",
+      name: "Sortable Attributes",
+      type: "string",
+      meta: {
+        width: "full",
+        interface: "system-field-tree",
+        required: false,
+        options: {
+          collectionField: "collection",
+        },
+        note: "Fields that can be used to sort search results in Meilisearch queries. Select the fields you want to make sortable.",
       },
     },
     {
