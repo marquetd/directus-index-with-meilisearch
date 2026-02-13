@@ -116,6 +116,7 @@ export default defineOperationApi<Options>({
         fields,
         limit,
         page,
+        // @ts-ignore
         filter: finalFilter,
       });
 

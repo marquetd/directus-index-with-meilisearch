@@ -8,6 +8,16 @@ export type ComputedFieldConfig = {
 };
 
 export const collectionComputedFields: Record<string, ComputedFieldConfig[]> = {
+  abstract: [
+    {
+      fieldName: "speaker",
+      compute: (item) => {
+        const authors = item.authors ?? [];
+        const speaker = authors.find((i: any) => i.speaker);
+        return speaker ? speaker.firstName + " " + speaker.lastName : null;
+      },
+    },
+  ],
   person: [
     {
       fieldName: "isExpert",
