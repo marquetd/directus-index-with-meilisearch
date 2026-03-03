@@ -1,3 +1,5 @@
+import { Job, Person } from "./types";
+
 /**
  * Collection-specific computed fields configuration
  * Each entry defines a field to add and its computation logic
@@ -30,6 +32,28 @@ export const collectionComputedFields: Record<string, ComputedFieldConfig[]> = {
       compute: (item) => {
         const jobs = item.jobs ?? [];
         return jobs.some((i: any) => !i.endDate);
+      },
+    },
+    {
+      fieldName: "lastJob",
+      compute: (item: Person) => {
+        const jobs = item.jobs ? (item.jobs as Job[]) : [];
+        if (jobs.length === 0) return null;
+        const lastJob = jobs.reduce((prev: Job | null, current: Job) => {
+          if (!prev) {
+            return current;
+          }
+          if (current.endDate && prev.endDate) {
+            return new Date(current.endDate) > new Date(prev.endDate)
+              ? current
+              : prev;
+          }
+          if (!current.endDate && prev.endDate) {
+            return current;
+          }
+          return prev;
+        }, null);
+        return lastJob;
       },
     },
   ],
